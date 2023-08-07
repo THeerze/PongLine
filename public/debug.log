@@ -1,0 +1,3 @@
+[0114/174855.588:ERROR:crash_report_database_win.cc(580)] CreateDirectory C:\Program Files (x86)\Easthas\Reports\Dump: Het systeem kan het opgegeven pad niet vinden. (0x3)
+[0114/174855.591:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: De pipe is beëindigd. (0x6D)
+[0114/174855.592:ERROR:crash_report_database_win.cc(580)] CreateDirectory C:\Program Files (x86)\Easthas\Reports\Dump: Het systeem kan het opgegeven pad niet vinden. (0x3)

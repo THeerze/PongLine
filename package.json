@@ -1,0 +1,20 @@
+{
+  "name": "pong-online",
+  "version": "1.0.0",
+  "description": "sockets",
+  "main": "sketch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sockets",
+    "p5.js",
+    "node"
+  ],
+  "author": "Theyn Kan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^2.3.0"
+  }
+}

@@ -1,9 +1,6 @@
 let socket;
 let xSize = 1280;
 let ySize = 720;
-let Player1;
-let Player2;
-let Ball;
 
 let initGame = false;
 let startGame = false;
@@ -68,7 +65,6 @@ function draw() {
 
 	else if (startGame == true) {
 
-		console.log(playerNo);
 		let yData = {
 			y: localPlayer.yPos
 		};
@@ -87,7 +83,7 @@ function draw() {
 				localPlayer.xPos = 100;
 				otherPlayer.xPos = xSize - 100;
 			
-				case 2:
+			case 2:
 		}
 
 		Ball.display();

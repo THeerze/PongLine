@@ -10,18 +10,31 @@ console.log("Server is running");
 var socket = require('socket.io');
 var io = socket(server);
 
+var userCount = 0;
 
-io.sockets.on('connection', newConnection);
-
-function newConnection(socket) {
-	console.log('new connection: ' + socket.id);
+io.on('connection', (socket) => {
+	var userId = socket.id;
+	console.log('new connection: ' + userId);
+	userCount += 1;
+	io.emit('playerCount', userCount);
 
 	socket.on('yPos', yMsg);
 
 	function yMsg(yData) {
-		socket.broadcast.emit('yPos', yData);
+		yDataOther = yData;
+		socket.broadcast.emit('yPosOther', yDataOther);
 	}
-}
+
+	socket.on('disconnect', (socket) => {
+		console.log(userId + ' disconnected');
+		userCount -= 1;
+		io.emit('playerCount', userCount);
+		console.log(userCount);
+	})
+})
+
+
+// <---Code graveyard--->
 
 // namespaces (rooms) https://socket.io/docs/rooms-and-namespaces/
 

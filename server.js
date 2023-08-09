@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('yPosOther', yDataOther);
 	}
 
-	socket.on('BallPos', sendBallPos);
+	socket.on('ballPos', sendBallPos);
 
 	function sendBallPos(ballPos) {
 		socket.broadcast.emit('ballPos', ballPos);

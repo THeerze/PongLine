@@ -40,7 +40,6 @@ function syncBallPos(ballPos) {
 function draw() {
 
 	background(1, 100);
-	console.log(playerNo);
 
 	socket.on('playerCount', (userCount) => {
 		playerCount = userCount;
@@ -60,18 +59,40 @@ function draw() {
 	}
 
 	else if (startGame == true) {
+		console.log(playerNo);
 
-		let yData = {
-			y: Player1.yPos
-		};
+		switch (playerNo) {
+			case 1:
+				{
+					let yData = {
+						y: Player1.yPos
+					};
+			
+					socket.emit('yPos', yData);
+				
+					Player1.display();
+					Player1.move();
+			
+					Player2.display();
+					Player2.yPos = yPosOther[yPosOther.length-1]['y'];
+				}
 
-		socket.emit('yPos', yData);
-	
-		Player1.display();
-		Player1.move();
-
-		Player2.display();
-		Player2.yPos = yPosOther[yPosOther.length-1]['y'];
+			case 2:
+				{
+					let yData = {
+						y: Player2.yPos
+					};
+			
+					socket.emit('yPos', yData);
+				
+					Player2.display();
+					Player2.move();
+			
+					Player1.display();
+					Player1.yPos = yPosOther[yPosOther.length-1]['y'];
+				}
+				
+		}
 
 		Ball.display();
 		Ball.move();

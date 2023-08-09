@@ -17,12 +17,30 @@ io.on('connection', (socket) => {
 	console.log('new connection: ' + userId);
 	userCount += 1;
 	io.emit('playerCount', userCount);
+	
+	setPlayerNumber(userCount);
+	function setPlayerNumber(userCount) {
+		if (userCount % 2 != 0) {
+			playerNumber = 1;
+		}
+		else if (userCount % 2 == 0) {
+			playerNumber = 2;
+		}
+		console.log('playerNumber: ' + playerNumber);
+		socket.emit('playerNumber', playerNumber);
+	}
 
 	socket.on('yPos', yMsg);
 
 	function yMsg(yData) {
 		yDataOther = yData;
 		socket.broadcast.emit('yPosOther', yDataOther);
+	}
+
+	socket.on('BallPos', sendBallPos);
+
+	function sendBallPos(ballPos) {
+		socket.broadcast.emit('ballPos', ballPos);
 	}
 
 	socket.on('disconnect', (socket) => {
@@ -35,13 +53,3 @@ io.on('connection', (socket) => {
 
 
 // <---Code graveyard--->
-
-// namespaces (rooms) https://socket.io/docs/rooms-and-namespaces/
-
-// const nsp = io.of('/my-namespace');
-
-// nsp.on('connection', function(sockets){
-//   console.log('someone connected to');
-// });
-
-// nsp.emit('hi', 'everyone!');

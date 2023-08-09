@@ -1,5 +1,3 @@
-//const sockets = io('/my-namespace');
-
 let socket;
 let xSize = 1280;
 let ySize = 720;
@@ -10,29 +8,43 @@ let Ball;
 let initGame = false;
 let startGame = false;
 
-let yPosPlayer2 = [{'y': 0}];
+let yPosOther = [{'y': 0}];
+let ballPosList = [{'x': 50,
+					'y': 50}];
+
+let playerCount;
+let playerNo;
 
 function setup() {
 
 	createCanvas(xSize, ySize);
 	socket = io.connect();
-	socket.on('yPosOther', drawPlayer2);
+	socket.on('yPosOther', syncOtherPlayer);
+	socket.on('ballPos', syncBallPos);
+	socket.on('playerNumber', (playerNumber) => {
+		playerNo = playerNumber;
+	});
 }
 
-function drawPlayer2(yDataOther) {
+function syncOtherPlayer(yDataOther) {
 
-	yPosPlayer2.push(yDataOther);
+	yPosOther.push(yDataOther);
+}
+
+function syncBallPos(ballPos) {
+
+	ballPosList.push(ballPos);
 }
 
 
 function draw() {
 
 	background(1, 100);
+	console.log(playerNo);
 
 	socket.on('playerCount', (userCount) => {
-
-		if(userCount == 2) {
-			console.log("users: " + userCount);
+		playerCount = userCount;
+		if(playerCount == 2) {
 			initGame = true;
 		}
 	});
@@ -40,12 +52,11 @@ function draw() {
 	if(initGame == true) {
 
 		Player1 = new player1();
+		Player2 = new player2();
 		Ball = new ball();
-		Player2 = new player1();
 
 		initGame = false;
 		startGame = true;
-		timeout = true;
 	}
 
 	else if (startGame == true) {
@@ -60,11 +71,29 @@ function draw() {
 		Player1.move();
 
 		Player2.display();
-		Player2.xPos = xSize - 100;
-		Player2.yPos = yPosPlayer2[yPosPlayer2.length-1]['y'];
+		Player2.yPos = yPosOther[yPosOther.length-1]['y'];
 
 		Ball.display();
 		Ball.move();
+		syncBall(Ball);
+
+		if (playerCount < 2) {
+			startGame = false;
+		}
+	}
+}
+
+function syncBall(Ball) {
+	if (playerNo == 1) {
+		let ballPos = {
+			x: Ball.xPos,
+			y: Ball.yPos
+		}
+		socket.emit('ballPos', ballPos);
+	}
+	if (playerNo == 2) {
+		Ball.xPos = ballPosList[ballPosList.length-1]['x'];
+		Ball.yPos = ballPosList[ballPosList.length-1]['y'];
 	}
 }
 
@@ -72,6 +101,33 @@ function draw() {
 class player1 {
 	constructor() {
 		this.xPos = 100;
+		this.yPos = ySize/2 - 75;
+		this.width = 20;
+		this.height = 140;
+		this.speed = 10;
+	}
+
+	display() {
+		noStroke();
+		fill("white");
+		rect(this.xPos, this.yPos, this.width, this.height);
+	}
+
+	move() {
+		if(keyIsDown(87) && this.yPos > 0) {
+			this.yPos -= this.speed;
+		}
+
+		if(keyIsDown(83) && this.yPos < ySize - this.height) {
+			this.yPos += this.speed;
+		}
+	}
+
+}
+
+class player2 {
+	constructor() {
+		this.xPos = xSize - 100;
 		this.yPos = ySize/2 - 75;
 		this.width = 20;
 		this.height = 140;
@@ -121,8 +177,8 @@ class ball {
       		this.ySpeed = -this.ySpeed;
     	}
 
-   		 this.xPos += this.xSpeed;
-    	 this.yPos += this.ySpeed;
+   		this.xPos += this.xSpeed;
+    	this.yPos += this.ySpeed;
   	}
 }
 

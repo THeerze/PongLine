@@ -8,7 +8,7 @@ let Ball;
 let initGame = false;
 let startGame = false;
 
-let yPosOther = [{'y': 0}];
+let yPosOther = [{'y': ySize / 2 - 75}];
 let ballPosList = [{'x': 50,
 					'y': 50}];
 
@@ -50,8 +50,16 @@ function draw() {
 
 	if(initGame == true) {
 
-		Player1 = new player1();
-		Player2 = new player2();
+		switch (playerNo) {
+			case 1:
+				localPlayer = new player1();
+				otherPlayer = new player2();
+
+			case 2:
+				localPlayer = new player2();
+				otherPlayer = new player1();
+		}
+
 		Ball = new ball();
 
 		initGame = false;
@@ -59,39 +67,27 @@ function draw() {
 	}
 
 	else if (startGame == true) {
-		console.log(playerNo);
 
+		console.log(playerNo);
+		let yData = {
+			y: localPlayer.yPos
+		};
+
+		socket.emit('yPos', yData);
+
+		localPlayer.display();
+		localPlayer.move();
+
+		otherPlayer.display();
+		otherPlayer.yPos = yPosOther[yPosOther.length-1]['y'];
+
+		// mirrors the player position so P1 is left / P2 is right on both clients
 		switch (playerNo) {
 			case 1:
-				{
-					let yData = {
-						y: Player1.yPos
-					};
+				localPlayer.xPos = 100;
+				otherPlayer.xPos = xSize - 100;
 			
-					socket.emit('yPos', yData);
-				
-					Player1.display();
-					Player1.move();
-			
-					Player2.display();
-					Player2.yPos = yPosOther[yPosOther.length-1]['y'];
-				}
-
-			case 2:
-				{
-					let yData = {
-						y: Player2.yPos
-					};
-			
-					socket.emit('yPos', yData);
-				
-					Player2.display();
-					Player2.move();
-			
-					Player1.display();
-					Player1.yPos = yPosOther[yPosOther.length-1]['y'];
-				}
-				
+				case 2:
 		}
 
 		Ball.display();
@@ -105,6 +101,7 @@ function draw() {
 }
 
 function syncBall(Ball) {
+
 	if (playerNo == 1) {
 		let ballPos = {
 			x: Ball.xPos,
@@ -122,7 +119,7 @@ function syncBall(Ball) {
 class player1 {
 	constructor() {
 		this.xPos = 100;
-		this.yPos = ySize/2 - 75;
+		this.yPos = ySize/2 - 70;
 		this.width = 20;
 		this.height = 140;
 		this.speed = 10;
@@ -149,7 +146,7 @@ class player1 {
 class player2 {
 	constructor() {
 		this.xPos = xSize - 100;
-		this.yPos = ySize/2 - 75;
+		this.yPos = ySize/2 - 70;
 		this.width = 20;
 		this.height = 140;
 		this.speed = 10;

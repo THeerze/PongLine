@@ -12,6 +12,9 @@ let ballPosList = [{'x': 50,
 let playerCount;
 let playerNo;
 
+let ping;
+let pingStart;
+
 function setup() {
 
 	createCanvas(xSize, ySize);
@@ -21,6 +24,8 @@ function setup() {
 	socket.on('playerNumber', (playerNumber) => {
 		playerNo = playerNumber;
 	});
+
+	checkPing();
 }
 
 function syncOtherPlayer(yDataOther) {
@@ -38,6 +43,10 @@ function draw() {
 
 	background(1, 100);
 
+	scoreboard = new Scoreboard();
+	scoreboard.pingDisplay();
+
+
 	socket.on('playerCount', (userCount) => {
 		playerCount = userCount;
 		if(playerCount == 2) {
@@ -45,7 +54,7 @@ function draw() {
 		}
 	});
 
-	if(initGame == true) {
+	if (initGame == true) {
 
 		switch (playerNo) {
 			case 1:
@@ -108,6 +117,41 @@ function syncBall(Ball) {
 	if (playerNo == 2) {
 		Ball.xPos = ballPosList[ballPosList.length-1]['x'];
 		Ball.yPos = ballPosList[ballPosList.length-1]['y'];
+	}
+}
+
+function checkPing() {
+	setInterval(() => {
+		pingStart = Date.now();
+		socket.emit('send')
+	}, 500);
+
+	socket.on('receive', () => {
+		ping = Date.now() - pingStart;
+		console.log(ping + ' ms');
+	});
+}
+
+class Scoreboard {
+	constructor() {
+		this.xPos = xSize / 2;
+		this.yPos = 0;
+		this.width = 350;
+		this.height = 100;
+	}
+
+	scoreDisplay() {
+		noStroke();
+		fill("white");
+		textSize(24);
+	}
+
+	pingDisplay() {
+		noStroke();
+		fill("gray");
+		textSize(12);
+		textAlign(CENTER);
+		text(ping + ' ms', this.xPos, this.yPos + 2/3 * this.height);
 	}
 }
 

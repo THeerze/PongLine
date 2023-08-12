@@ -30,6 +30,10 @@ io.on('connection', (socket) => {
 		socket.emit('playerNumber', playerNumber);
 	}
 
+	socket.on('send', () => {
+		socket.emit('receive');
+	});
+
 	socket.on('yPos', yMsg);
 
 	function yMsg(yData) {

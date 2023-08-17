@@ -47,6 +47,14 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('ballPos', ballPos);
 	}
 
+	socket.on('scoreP1', (scoreP1) => {
+		socket.broadcast.emit('scoreP1', scoreP1);
+	});
+
+	socket.on('scoreP2', (scoreP2) => {
+		socket.broadcast.emit('scoreP2', scoreP2);
+	});
+
 	socket.on('disconnect', (socket) => {
 		console.log(userId + ' disconnected');
 		userCount -= 1;

@@ -65,20 +65,18 @@ function draw() {
 
 	mouse = new Mouse();
 
+	console.log(gameState);
 
 	socket.on('playerCount', (userCount) => {
 		playerCount = userCount;
-		if (playerCount == 2) {
-			gameState = 'end';
-			winner = 'p2';
+		if (playerCount > 0) {
+			gameState = 'menu';
 		}
 	});
 
 	switch (gameState) {
 		case 'menu': {
-			textSize(96);
-			text('main menu', xSize / 2, ySize / 2);
-			mouse.display();
+			mainMenu(gameState);
 		}
 
 		case 'wait': {
@@ -141,8 +139,8 @@ function draw() {
 
 			scoreboard.scoreDisplay();
 
-			if (playerCount < 2) {
-				gameState = 'wait';
+			if (playerCount < 2 && gameState == 'start' || gameState == 'init') {
+				gameState = 'menu';
 			}
 		}
 
@@ -253,6 +251,21 @@ function victoryScreen() {
 			button(150, 550, 350, 75, 'rgba(100%, 100%, 100%, 0.85)', 'n', '', 10, 'Quit', 56, 'black', 'n', '', 2, 'menu');
 			button(xSize - 150 - 350, 550, 350, 75, 'rgba(100%, 100%, 100%, 0.85)', 'n', '', 10, 'Replay', 56, 'black', 'n', '', 2, 'wait');
 
+	}
+}
+
+function mainMenu() {
+
+
+	textSize(96);
+	text('Main Menu', xSize / 2, ySize / 2);
+	textSize(42);
+	text('Press "F" to queue for a new game', xSize / 2, ySize / 2 + 100);
+
+	mouse.display();
+
+	if (keyIsDown(70)) {
+		gameState = 'wait';
 	}
 }
 

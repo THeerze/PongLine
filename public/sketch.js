@@ -69,20 +69,18 @@ function draw() {
 
 	socket.on('playerCount', (userCount) => {
 		playerCount = userCount;
-		if (playerCount > 0) {
+		if (playerCount > 0 && playerCount <= 2) {
 			gameState = 'menu';
 		}
 	});
 
 	switch (gameState) {
 		case 'menu': {
-			mainMenu(gameState);
+			gameState = mainMenu(gameState);
 		}
 
 		case 'wait': {
-			if (playerCount == 2) {
-				gameState = 'init';
-			}
+			gameState = waitScreen(gameState);
 		}
 
 		case 'init': {
@@ -139,7 +137,7 @@ function draw() {
 
 			scoreboard.scoreDisplay();
 
-			if (playerCount < 2 && gameState == 'start' || gameState == 'init') {
+			if (playerCount < 2 && gameState == 'start' || gameState == 'init') {	
 				gameState = 'menu';
 			}
 		}
@@ -254,9 +252,7 @@ function victoryScreen() {
 	}
 }
 
-function mainMenu() {
-
-
+function mainMenu(gameState) {
 	textSize(96);
 	text('Main Menu', xSize / 2, ySize / 2);
 	textSize(42);
@@ -265,7 +261,19 @@ function mainMenu() {
 	mouse.display();
 
 	if (keyIsDown(70)) {
-		gameState = 'wait';
+		return gameState = 'wait';
+	}
+}
+
+function waitScreen(gameState) {
+	clear();
+	background(1, 100);
+
+	textSize(96);
+	text('Searching for a Game', xSize / 2, ySize / 2);
+
+	if (playerCount == 2) {
+		return gameState = 'init';
 	}
 }
 
